@@ -2,7 +2,7 @@ const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 const retest = require('../index')
 const uuid = require('uuid')
-const { body, id, skipIds, skipTo, depends } = retest.operators
+const { action, id, skipIds, skipTo, depends } = retest.operators
 
 chai.use(chaiAsPromised)
 
@@ -21,9 +21,9 @@ describe('Dependencies tests', () => {
       let targetHaveWorked = false
       const targetId = uuid()
 
-      const suiteFalsy = suite(body(() => assert.throw()), skipTo(targetId))
-      const suitePassed = suite(body(() => (suiteShouldBePassed = false)))
-      const suiteTarget = suite(id(targetId), body(() => (targetHaveWorked = true)))
+      const suiteFalsy = suite(action(() => assert.throw()), skipTo(targetId))
+      const suitePassed = suite(action(() => (suiteShouldBePassed = false)))
+      const suiteTarget = suite(id(targetId), action(() => (targetHaveWorked = true)))
 
       await assert.isRejected(suiteFalsy())
       await assert.isRejected(suitePassed())
@@ -38,9 +38,9 @@ describe('Dependencies tests', () => {
       let targetHaveWorked = false
       const targetId = uuid()
 
-      const suiteFalsy = suite(body(() => assert.throw()), skipIds(targetId))
-      const suitePassed = suite(id(targetId), body(() => (suiteShouldBePassed = false)))
-      const suiteTarget = suite(body(() => (targetHaveWorked = true)))
+      const suiteFalsy = suite(action(() => assert.throw()), skipIds(targetId))
+      const suitePassed = suite(id(targetId), action(() => (suiteShouldBePassed = false)))
+      const suiteTarget = suite(action(() => (targetHaveWorked = true)))
 
       await assert.isRejected(suiteFalsy())
       await assert.isRejected(suitePassed())
@@ -56,10 +56,10 @@ describe('Dependencies tests', () => {
       let targetHaveWorked = false
       const ids = [uuid(), uuid()]
 
-      const suiteFalsy = suite(body(() => assert.throw()), skipIds(ids))
-      const suitePassed = suite(id(ids.pop()), body(() => (suiteShouldBePassed = false)))
-      const suiteTarget = suite(body(() => (targetHaveWorked = true)))
-      const suitePassed_ = suite(id(ids.pop()), body(() => (suiteShouldBePassed1 = false)))
+      const suiteFalsy = suite(action(() => assert.throw()), skipIds(ids))
+      const suitePassed = suite(id(ids.pop()), action(() => (suiteShouldBePassed = false)))
+      const suiteTarget = suite(action(() => (targetHaveWorked = true)))
+      const suitePassed_ = suite(id(ids.pop()), action(() => (suiteShouldBePassed1 = false)))
 
       await assert.isRejected(suiteFalsy())
       await assert.isRejected(suitePassed())
@@ -76,9 +76,9 @@ describe('Dependencies tests', () => {
       let targetHaveWorked = false
       const targetId = uuid()
 
-      const suiteFalsy = suite(body(() => assert.throw()), id(targetId))
-      const suitePassed = suite(body(() => (suiteShouldBePassed = false)), depends(targetId))
-      const suiteTarget = suite(body(() => (targetHaveWorked = true)))
+      const suiteFalsy = suite(action(() => assert.throw()), id(targetId))
+      const suitePassed = suite(action(() => (suiteShouldBePassed = false)), depends(targetId))
+      const suiteTarget = suite(action(() => (targetHaveWorked = true)))
 
       await assert.isRejected(suiteFalsy())
       await assert.isRejected(suitePassed())

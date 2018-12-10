@@ -1,6 +1,6 @@
 const createOperator = require('../lib/createOperator')
 const createManuallyOperation = require('../lib/createManuallyOperation')
 
-const fallback = createOperator(createManuallyOperation('fallback'))
+const body = createOperator(createManuallyOperation('action'))
 
-module.exports = fallback
+module.exports = body

@@ -1,8 +1,8 @@
 const combiner = require('./src/combiner')
 
-const body = require('./src/operators/body')
+const action = require('./src/operators/action')
 const depends = require('./src/operators/depends')
-const fallback = require('./src/operators/fallback')
+const rescue = require('./src/operators/rescue')
 const id = require('./src/operators/id')
 const otherwise = require('./src/operators/otherwise')
 const recovery = require('./src/operators/recovery')
@@ -11,9 +11,9 @@ const skipTo = require('./src/operators/skipTo')
 
 module.exports = combiner
 module.exports.operators = {
-  body,
+  action,
   depends,
-  fallback,
+  rescue,
   id,
   otherwise,
   recovery,

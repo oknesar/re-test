@@ -1,7 +1,7 @@
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 const retest = require('../index')
-const { body, fallback, recovery, otherwise } = retest.operators
+const { action, rescue, recovery, otherwise } = retest.operators
 
 chai.use(chaiAsPromised)
 
@@ -16,31 +16,31 @@ describe('Base tests', () => {
 
   it('Check context', async () => {
     const test = suite(
-      body(async context => {
+      action(async context => {
         assert.equal(context, ctx)
         throw new Error()
       }),
-      fallback(async context => assert.equal(context, ctx)),
+      rescue(async context => assert.equal(context, ctx)),
       otherwise(async context => assert.equal(context, ctx)),
     )
     assert.instanceOf(test, Function)
     await assert.isRejected(test())
   })
 
-  it('Check body chain', async () => {
+  it('Check action chain', async () => {
     const counter = Array(10).fill(false)
-    const test = suite(...makeChainOfOperators(counter, body))
+    const test = suite(...makeChainOfOperators(counter, action))
     await test()
     counter.forEach(assert.isTrue)
   })
 
-  it('Check fallback chain', async () => {
+  it('Check rescue chain', async () => {
     const counter = Array(10).fill(false)
     const test = suite(
-      body(async () => {
+      action(async () => {
         throw new Error()
       }),
-      ...makeChainOfOperators(counter, fallback),
+      ...makeChainOfOperators(counter, rescue),
     )
     await assert.isRejected(test())
     counter.forEach(assert.isTrue)
@@ -49,7 +49,7 @@ describe('Base tests', () => {
   it('Check recovery chain', async () => {
     const counter = Array(10).fill(false)
     const testWithError = suite(
-      body(() => {
+      action(() => {
         throw new Error()
       }),
     )
@@ -61,7 +61,7 @@ describe('Base tests', () => {
 
   it('Check otherwise chain (no errors)', async () => {
     const counter = Array(10).fill(false)
-    const test = suite(body(async () => {}), ...makeChainOfOperators(counter, otherwise))
+    const test = suite(action(async () => {}), ...makeChainOfOperators(counter, otherwise))
     await assert.isFulfilled(test())
     counter.slice(1).forEach(assert.isTrue)
   })
@@ -69,7 +69,7 @@ describe('Base tests', () => {
   it('Check otherwise chain (with errors)', async () => {
     const counter = Array(10).fill(false)
     const test = suite(
-      body(async () => {
+      action(async () => {
         throw new Error()
       }),
       ...makeChainOfOperators(counter, otherwise),
@@ -78,7 +78,7 @@ describe('Base tests', () => {
     counter.slice(1).forEach(assert.isTrue)
   })
 
-  it('Check body nested chain', async () => {
+  it('Check action nested chain', async () => {
     const counter = Array(10).fill(false)
     const test = createTest()
     await test()
@@ -86,7 +86,7 @@ describe('Base tests', () => {
 
     function createTest(n = 0) {
       return suite(
-        body(async () => {
+        action(async () => {
           counter[n] = true
         }),
         n < 10 && createTest(n + 1),

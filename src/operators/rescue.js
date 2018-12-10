@@ -1,6 +1,6 @@
 const createOperator = require('../lib/createOperator')
 const createManuallyOperation = require('../lib/createManuallyOperation')
 
-const body = createOperator(createManuallyOperation('body'))
+const rescue = createOperator(createManuallyOperation('rescue'))
 
-module.exports = body
+module.exports = rescue
