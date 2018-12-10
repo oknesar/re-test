@@ -1,7 +1,12 @@
-const assert = require('chai').assert
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
 const retest = require('../index')
 const uuid = require('uuid')
 const { body, id, skipIds, skipTo, depends } = retest.operators
+
+chai.use(chaiAsPromised)
+
+const assert = chai.assert
 
 describe('Dependencies tests', () => {
   let suite, ctx
@@ -20,8 +25,8 @@ describe('Dependencies tests', () => {
       const suitePassed = suite(body(() => (suiteShouldBePassed = false)))
       const suiteTarget = suite(id(targetId), body(() => (targetHaveWorked = true)))
 
-      await suiteFalsy().catch(() => {})
-      await suitePassed().catch(() => {})
+      await assert.isRejected(suiteFalsy())
+      await assert.isRejected(suitePassed())
       await suiteTarget()
 
       assert.isTrue(suiteShouldBePassed)
@@ -37,8 +42,8 @@ describe('Dependencies tests', () => {
       const suitePassed = suite(id(targetId), body(() => (suiteShouldBePassed = false)))
       const suiteTarget = suite(body(() => (targetHaveWorked = true)))
 
-      await suiteFalsy().catch(() => {})
-      await suitePassed().catch(() => {})
+      await assert.isRejected(suiteFalsy())
+      await assert.isRejected(suitePassed())
       await suiteTarget()
 
       assert.isTrue(suiteShouldBePassed)
@@ -54,12 +59,12 @@ describe('Dependencies tests', () => {
       const suiteFalsy = suite(body(() => assert.throw()), skipIds(ids))
       const suitePassed = suite(id(ids.pop()), body(() => (suiteShouldBePassed = false)))
       const suiteTarget = suite(body(() => (targetHaveWorked = true)))
-      const suitePassed1 = suite(id(ids.pop()), body(() => (suiteShouldBePassed1 = false)))
+      const suitePassed_ = suite(id(ids.pop()), body(() => (suiteShouldBePassed1 = false)))
 
-      await suiteFalsy().catch(() => {})
-      await suitePassed().catch(() => {})
+      await assert.isRejected(suiteFalsy())
+      await assert.isRejected(suitePassed())
       await suiteTarget()
-      await suitePassed1().catch(() => {})
+      await assert.isRejected(suitePassed_())
 
       assert.isTrue(suiteShouldBePassed)
       assert.isTrue(suiteShouldBePassed1)
@@ -75,8 +80,8 @@ describe('Dependencies tests', () => {
       const suitePassed = suite(body(() => (suiteShouldBePassed = false)), depends(targetId))
       const suiteTarget = suite(body(() => (targetHaveWorked = true)))
 
-      await suiteFalsy().catch(() => {})
-      await suitePassed().catch(() => {})
+      await assert.isRejected(suiteFalsy())
+      await assert.isRejected(suitePassed())
       await suiteTarget()
 
       assert.isTrue(suiteShouldBePassed)
