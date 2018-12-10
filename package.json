@@ -1,0 +1,18 @@
+{
+  "name": "retest",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "V.Rasenko",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "prettier": "^1.15.3",
+    "uuid": "^3.3.2"
+  },
+  "dependencies": {}
+}
