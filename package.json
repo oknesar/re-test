@@ -1,6 +1,6 @@
 {
   "name": "@oknesar/re-test",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Like recompose for end-to-end tests",
   "main": "index.js",
   "scripts": {
