@@ -2,7 +2,7 @@ const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 const retest = require('../index')
 const uuid = require('uuid')
-const { action, id, skipIds, skipTo, depends } = retest.operators
+const { action, id, skipIds, skipTo, depends, skipAll } = retest.operators
 
 chai.use(chaiAsPromised)
 
@@ -86,6 +86,22 @@ describe('Dependencies tests', () => {
 
       assert.isTrue(suiteShouldBePassed)
       assert.isTrue(targetHaveWorked)
+    })
+
+    it('skipAll', async () => {
+      let suiteShouldBePassed = true
+      let suiteShouldBePassed_ = true
+
+      const suiteFalsy = suite(action(() => assert.throw()), skipAll())
+      const suitePassed = suite(action(() => (suiteShouldBePassed = false)))
+      const suitePassed_ = suite(action(() => (suiteShouldBePassed_ = false)))
+
+      await assert.isRejected(suiteFalsy())
+      await assert.isRejected(suitePassed())
+      await assert.isRejected(suitePassed_())
+
+      assert.isTrue(suiteShouldBePassed)
+      assert.isTrue(suiteShouldBePassed_)
     })
   })
 })

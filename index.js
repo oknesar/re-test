@@ -8,6 +8,8 @@ const otherwise = require('./src/operators/otherwise')
 const recovery = require('./src/operators/recovery')
 const skipIds = require('./src/operators/skipIds')
 const skipTo = require('./src/operators/skipTo')
+const skipAll = require('./src/operators/skipAll')
+const errors = require('./src/lib/errors')
 
 module.exports = combiner
 module.exports.operators = {
@@ -19,4 +21,6 @@ module.exports.operators = {
   recovery,
   skipIds,
   skipTo,
+  skipAll,
+  errors,
 }

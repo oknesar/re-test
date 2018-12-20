@@ -5,6 +5,7 @@ class State {
     this.skipIds = []
     this.failed = []
     this.skipTo = null
+    this.skipAll = false
     this.errorBefore = false
   }
 
@@ -16,8 +17,18 @@ class State {
     if (model.skipIds && model.skipIds.length) this.skipIds.push(...model.skipIds)
   }
 
+  saveSkipAll(model) {
+    if (model.skipAll) this.skipAll = model.skipAll
+  }
+
   saveSkipTo(model) {
     if (model.skipTo) this.skipTo = model.skipTo
+  }
+
+  checkSkipAll() {
+    if (!this.skipAll) return
+
+    throw new SkipError('All skipped')
   }
 
   checkSkipTo(model) {
@@ -27,21 +38,21 @@ class State {
       return
     }
 
-    this.throwSkipError(`Skipped because waiting for "${state.skipTo}"`)
+    this.throwSkipError(model, `Skipped because waiting for "${this.skipTo}"`)
   }
 
   checkSkipIds(model) {
     if (!model.id) return
     if (!this.skipIds.includes(model.id)) return
 
-    this.throwSkipError(`Skipped by id "${model.id}"`)
+    this.throwSkipError(model, `Skipped by id "${model.id}"`)
   }
 
   checkDependency(model) {
     if (!model.depends || !model.depends.length) return
     const dependency = model.depends.find(id => this.failed.includes(id))
     if (dependency) {
-      this.throwSkipError(`Skipped because "${dependency}" failed`)
+      this.throwSkipError(model, `Skipped because "${dependency}" failed`)
     }
   }
 

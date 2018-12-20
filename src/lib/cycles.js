@@ -1,6 +1,7 @@
 const { pipe } = require('./helpers')
 
 function skipCycle(model, state) {
+  state.checkSkipAll()
   state.checkSkipTo(model)
   state.checkSkipIds(model)
   state.checkDependency(model)
@@ -27,6 +28,7 @@ async function rescueCycle(model, state, ctx, error) {
   state.errorBefore = true
   state.saveFailedId(model)
   state.saveSkippedIds(model)
+  state.saveSkipAll(model)
   state.saveSkipTo(model)
   return await pipe(
     model.rescue,
