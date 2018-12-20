@@ -12,6 +12,7 @@ const skipAll = require('./src/operators/skipAll')
 const errors = require('./src/lib/errors')
 
 module.exports = combiner
+module.exports.errors = errors
 module.exports.operators = {
   action,
   depends,
@@ -22,5 +23,4 @@ module.exports.operators = {
   skipIds,
   skipTo,
   skipAll,
-  errors,
 }

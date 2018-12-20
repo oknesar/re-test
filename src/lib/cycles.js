@@ -1,10 +1,19 @@
 const { pipe } = require('./helpers')
+const { SkipError } = require('./errors')
 
-function skipCycle(model, state) {
-  state.checkSkipAll()
-  state.checkSkipTo(model)
-  state.checkSkipIds(model)
-  state.checkDependency(model)
+function skipCycle(model, state, _this) {
+  try {
+    state.checkSkipAll()
+    state.checkSkipTo(model)
+    state.checkSkipIds(model)
+    state.checkDependency(model)
+  } catch (err) {
+    const runInMochaContextAndNeedToSkip =
+      err instanceof SkipError && this && 'skip' in _this && typeof _this.skip === 'function'
+    if (runInMochaContextAndNeedToSkip) return _this.skip()
+
+    throw err
+  }
 }
 
 async function recoveryCycle(model, state, ctx, temp) {

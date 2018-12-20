@@ -1,7 +1,6 @@
 const sym = require('./symbols')
 const State = require('./State')
 const createModel = require('./lib/createModel')
-const { SkipError } = require('./lib/errors')
 const { skipCycle, recoveryCycle, actionCycle, rescueCycle, otherwiseCycle } = require('./lib/cycles')
 
 function createCombiner(ctx) {
@@ -12,7 +11,7 @@ function createCombiner(ctx) {
 
     const cycleBundle = async function() {
       let _err, _temp
-      skipCycle(model, state)
+      skipCycle(model, state, this)
       try {
         _temp = await actionCycle(model, ctx, await recoveryCycle(model, state, ctx))
       } catch (err) {
@@ -21,9 +20,6 @@ function createCombiner(ctx) {
       } finally {
         await otherwiseCycle(model, ctx, _temp)
       }
-      const runInMochaContextAndNeedToSkip =
-        _err instanceof SkipError && this && 'skip' in this && typeof this.skip === 'function'
-      if (runInMochaContextAndNeedToSkip) this.skip()
       if (_err) throw _err
     }
 
