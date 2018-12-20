@@ -1,7 +1,7 @@
 {
-  "name": "retest",
-  "version": "0.0.1",
-  "description": "",
+  "name": "@oknesar/re-test",
+  "version": "0.0.2",
+  "description": "Like recompose for end-to-end tests",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

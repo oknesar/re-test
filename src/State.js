@@ -1,3 +1,5 @@
+const { SkipError } = require('./lib/errors')
+
 class State {
   constructor() {
     this.skipIds = []
@@ -46,7 +48,7 @@ class State {
   throwSkipError(model, message) {
     this.saveFailedId(model)
     this.saveSkippedIds(model)
-    throw new Error(message)
+    throw new SkipError(message)
   }
 }
 
