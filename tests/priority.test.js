@@ -2,7 +2,7 @@ const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 const retest = require('../index')
 const uuid = require('uuid')
-const { action, id, skipIds, skipTo, depends, skipAll } = retest.operators
+const { action, id, skipIds, skipTo, depends, skipAll, recovery } = retest.operators
 
 chai.use(chaiAsPromised)
 
@@ -10,7 +10,7 @@ const assert = chai.assert
 
 describe('Dependencies tests', () => {
   let suite, ctx
-  before(() => {
+  beforeEach(() => {
     ctx = {}
     suite = retest(ctx)
   })
@@ -102,6 +102,30 @@ describe('Dependencies tests', () => {
 
       assert.isTrue(suiteShouldBePassed)
       assert.isTrue(suiteShouldBePassed_)
+    })
+
+    it('recovery', async () => {
+      let suiteShouldBePassed = true
+      let suiteShouldBePassed_ = true
+      let shouldBeFalse = false
+      let shouldBeTrue = false
+
+      const suiteFalsy = suite(action(() => assert.throw()), skipTo('last'))
+      const suitePassed = suite(recovery(() => (shouldBeFalse = true)), action(() => (suiteShouldBePassed = false)))
+      const suitePassed_ = suite(
+        id('last'),
+        recovery(() => (shouldBeTrue = true)),
+        action(() => (suiteShouldBePassed_ = false)),
+      )
+
+      await assert.isRejected(suiteFalsy())
+      await assert.isRejected(suitePassed())
+      await assert.isFulfilled(suitePassed_())
+
+      assert.isTrue(suiteShouldBePassed)
+      assert.isFalse(suiteShouldBePassed_)
+      assert.isFalse(shouldBeFalse)
+      assert.isTrue(shouldBeTrue)
     })
   })
 })

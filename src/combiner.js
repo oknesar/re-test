@@ -5,8 +5,10 @@ const { skipCycle, recoveryCycle, actionCycle, rescueCycle, otherwiseCycle } = r
 
 function createCombiner(ctx) {
   const state = new State()
+  combine.dispatcher = state.getDispatcher()
+  return combine
 
-  return function combine(...operators) {
+  function combine(...operators) {
     const model = createModel(operators)
 
     const cycleBundle = async function() {

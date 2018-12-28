@@ -9,6 +9,30 @@ class State {
     this.errorBefore = false
   }
 
+  getDispatcher() {
+    const state = this
+    return {
+      get state() {
+        return {
+          skipIds: state.skipIds.slice(),
+          failed: state.failed.slice(),
+          skipTo: state.skipTo,
+          skipAll: state.skipAll,
+          errorBefore: state.errorBefore,
+        }
+      },
+      goTo(id) {
+        state.skipTo = String(id)
+      },
+      skipAll() {
+        state.skipAll = true
+      },
+      addSkippedIds(ids) {
+        state.skipIds = state.skipIds.concat(ids)
+      },
+    }
+  }
+
   saveFailedId(model) {
     if (model.id) this.failed.push(model.id)
   }
@@ -59,6 +83,7 @@ class State {
   throwSkipError(model, message) {
     this.saveFailedId(model)
     this.saveSkippedIds(model)
+    this.saveSkipAll(model)
     throw new SkipError(message)
   }
 }
