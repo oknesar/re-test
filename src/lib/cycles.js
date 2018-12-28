@@ -4,6 +4,7 @@ const { SkipError } = require('./errors')
 function skipCycle(model, state, _this) {
   try {
     state.checkSkipAll()
+    state.checkGoTo(model)
     state.checkSkipTo(model)
     state.checkSkipIds(model)
     state.checkDependency(model)

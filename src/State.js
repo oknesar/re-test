@@ -5,6 +5,7 @@ class State {
     this.skipIds = []
     this.failed = []
     this.skipTo = null
+    this.goTo = null
     this.skipAll = false
     this.errorBefore = false
   }
@@ -22,7 +23,10 @@ class State {
         }
       },
       goTo(id) {
-        state.skipTo = String(id)
+        state.goTo = id
+      },
+      skipTo(id) {
+        state.skipTo = id
       },
       skipAll() {
         state.skipAll = true
@@ -53,6 +57,12 @@ class State {
     if (!this.skipAll) return
 
     throw new SkipError('All skipped')
+  }
+
+  checkGoTo() {
+    if (!this.goTo) return
+
+    throw new SkipError(`Go to ${this.goTo}`)
   }
 
   checkSkipTo(model) {
