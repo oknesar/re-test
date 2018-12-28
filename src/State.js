@@ -18,6 +18,7 @@ class State {
           skipIds: state.skipIds.slice(),
           failed: state.failed.slice(),
           skipTo: state.skipTo,
+          goTo: state.goTo,
           skipAll: state.skipAll,
           errorBefore: state.errorBefore,
         }
@@ -59,8 +60,12 @@ class State {
     throw new SkipError('All skipped')
   }
 
-  checkGoTo() {
+  checkGoTo(model) {
     if (!this.goTo) return
+    if (model.goTo === this.goTo) {
+      this.goTo = null
+      return
+    }
 
     throw new SkipError(`Go to ${this.goTo}`)
   }
